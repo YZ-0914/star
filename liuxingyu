@@ -1,0 +1,214 @@
+#liuingyu
+#define _CRT_SECURE_NO_WARNINGS 1
+
+//后缀.c和.cpp有啥区别：
+//.c是c语言的源程序格式，  .cpp是c++语言的源程序格式。这是两种不同的语言。
+//代码不一样的原因：这是编译器的问题————————C89和C99
+//C89规定，在任何执行语句前，在块的开头声明所有局部变量。在C99以及C++中则没有限制，即在首次使用之前，可在块的任何位置都可以声明变量。
+
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<graphics.h>
+#include<stdbool.h>
+#include<math.h>
+
+
+//数字雨
+
+//数字雨的结构体
+struct RAIN
+{
+	char str[20];
+	int x;
+	int y;
+}rain[20];
+
+
+//随机字符
+char randChar()
+{
+	//随机生成三种字符
+
+	int flag = 0;//标志 表示生成那种字符
+	flag = rand() % 3;// 0 1 2
+	switch (flag)
+	{
+	case 0:
+		return rand() % 26 + 'A';
+		break;
+	case 1:
+		return rand() % 26 + 'a';
+		break;
+	case 2:
+		return rand() % 10 + '0';
+		break;
+	default:
+		break;
+	}
+
+	
+}
+
+//活五角星
+//void star(int x,int y,int r)
+//{
+//	int xx1 = 0, yy1 = 0;
+//	int xx2 = 0, yy2 = 0;
+//
+//	double a = 0;
+//	double b = 2 * 3.14 / 10;
+//
+//	for (int i = 0; i < 5; i++)
+//	{
+//		xx1 = x + sin(a + i*3.14 * 2 / 5)*r;
+//		yy1 = y - cos(a + i*3.14 * 2 / 5)*r;
+//
+//		xx2 = x + sin(b + i*3.14 * 2 / 5)*r*2/5;
+//		yy2 = y - cos(b + i*3.14 * 2 / 5)*r*2/5;
+//
+//		line(xx1, yy1, xx2, yy2);
+//	}
+//
+//	b = -3.14 * 2 / 10;
+//	for (int i = 0; i < 5; i++)
+//	{
+//		xx1 = x + sin(a + i*3.14 * 2 / 5)*r;
+//		yy1 = y - cos(a + i*3.14 * 2 / 5)*r;
+//
+//		xx2 = x + sin(b + i*3.14 * 2 / 5)*r * 2 / 5;
+//		yy2 = y - cos(b + i*3.14 * 2 / 5)*r * 2 / 5;
+//
+//		line(xx1, yy1, xx2, yy2);
+//	}
+//	circle(x, y, r);
+//}
+
+//初始化
+void initData()
+{
+	//初始化内容
+	for (int i = 0; i < 20;i++)
+	{
+		//初始化坐标
+		rain[i].x = i * 30;
+		rain[i].y = rand() % 600;
+		for (int j = 0; j < 20;j++)
+		{
+			rain[i].str[j] = randChar();
+			printf("%c ", rain[i].str[j]);
+		}
+		printf("\n");
+	}
+	
+
+}
+//把字符显示在窗口上
+void showChar()
+{
+	for (int i = 0; i < 20;i++)
+	{
+		for (int j = 0; j < 20;j++)
+		{
+
+			settextcolor(RGB(255.0 / 20 * i, 255.0 / 20 * j, 0));
+			outtextxy(rain[i].x, rain[i].y+j*20,rain[i].str[j]);// "吉吉加油"
+		}
+	}
+	
+}
+
+//动起来
+void moveChar()
+{
+	for (int i = 0; i < 20; i++)
+	{
+		rain[i].y++;
+		if (rain[i].y >= 600)
+		{
+			rain[i].y = -20 * 20;
+		}
+	}
+}
+
+//按键处理
+void userKey()
+{
+	//scanf gets...  getchar
+	char ch = ' ';
+	if (_kbhit())//判断有没有按键
+	{
+		ch = _getch();
+		switch (ch)
+		{
+		case ' '://暂停功能
+			while ((_getch()) != ' ');
+			break;
+		default:
+			break;
+		}
+	}
+	
+}
+
+//鼠标处理
+void mouseKey()
+{
+	MOUSEMSG msg;
+	if (MouseHit())
+	{
+		msg = GetMouseMsg();
+		switch (msg.uMsg)
+		{
+		case WM_LBUTTONDOWN://如果按下左键
+			for (int i = 0; i < 20; i++)
+			{
+				(msg.x>rain[i].x) ? (rain[i].x++) : 0;
+				(msg.x<rain[i].x) ? (rain[i].x--) : 0;
+			}
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+
+
+int main()
+{
+	srand((unsigned)time(NULL));//播撒随机数种子
+
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+	//printf("%d \n", rand() % 5);//0 1 2 3 4
+
+	/*printf("%c ", randChar());
+	printf("%c ", randChar());
+	printf("%c ", randChar());
+*/
+
+	initData();
+	initgraph(600,600);//打开窗口600*600
+
+	//star(300, 300, 100);
+	
+	while (1)
+	{
+		showChar();
+        moveChar();
+		userKey();
+		mouseKey();
+		Sleep(1);
+	}
+
+	
+	//_getch();//获取一个字符
+	closegraph();//关闭窗口
+
+	return 0;
+}
